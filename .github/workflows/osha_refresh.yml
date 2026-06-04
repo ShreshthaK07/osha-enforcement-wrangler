@@ -28,6 +28,21 @@ jobs:
           print(r.text[:5000])
           EOF
 
+      - name: Test DOL v4 Dataset API
+        run: |
+          python - <<'EOF'
+          import requests
+          import json
+      
+          url = "https://apiprod.dol.gov/v4/datasets"
+      
+          r = requests.get(url)
+      
+          print("STATUS:", r.status_code)
+          print("CONTENT-TYPE:", r.headers.get("content-type"))
+          print(r.text[:2000])
+          EOF
+          
       - name: Test OSHA ZIP Download
         run: |
           python - <<'EOF'
