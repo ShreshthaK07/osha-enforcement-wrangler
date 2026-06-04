@@ -1,0 +1,51 @@
+name: OSHA Data Refresh
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-osha-db:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SQLite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlite3
+
+      - name: Install Python Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download OSHA Data
+        run: |
+          make collect
+
+      - name: Build Compiled Database
+        run: |
+          make compile_db
+
+      - name: Build Wrangled Database
+        run: |
+          make wrangle_db
+
+      - name: Verify Database Exists
+        run: |
+          ls -lah data/wrangled/
+
+      - name: Upload SQLite Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osha-wrangled-db
+          path: data/wrangled/osha_wrangled.sqlite
