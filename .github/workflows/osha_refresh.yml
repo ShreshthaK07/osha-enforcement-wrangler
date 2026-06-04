@@ -13,6 +13,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Find OSHA Datasets
+        run: |
+          python - <<'EOF'
+          import requests
+      
+          r = requests.get("https://apiprod.dol.gov/v4/datasets")
+          datasets = r.json()["datasets"]
+      
+          for d in datasets:
+              name = str(d.get("name",""))
+              table = str(d.get("tablename",""))
+      
+              if any(x in (name + table).lower() for x in [
+                  "osha",
+                  "inspection",
+                  "violation",
+                  "accident",
+                  "enforcement"
+              ]):
+                      print("="*80)
+                      print("ID:", d.get("id"))
+                      print("NAME:", name)
+                      print("TABLE:", table)
+          EOF
+          
       - name: Debug DOL Page
         run: |
           python - <<'EOF'
