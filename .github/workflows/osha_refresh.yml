@@ -13,6 +13,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Debug DOL Page
+        run: |
+          python - <<'EOF'
+          import requests
+      
+          r = requests.post(
+              "https://enforcedata.dol.gov/views/data_summary.php",
+              data={"agency":"osha"}
+          )
+      
+          print("Status:", r.status_code)
+          print("Final URL:", r.url)
+          print(r.text[:5000])
+          EOF
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
