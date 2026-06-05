@@ -13,6 +13,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Test OSHA Accident Endpoint
+        run: |
+          python - <<'EOF'
+          import requests
+      
+          url = "https://apiprod.dol.gov/v4/get/OSHA/accident/json"
+      
+          r = requests.get(url)
+      
+          print("STATUS:", r.status_code)
+          print(r.text[:3000])
+          EOF
+
       - name: Inspect OSHA Dataset new
         run: |
           python - <<'EOF'
